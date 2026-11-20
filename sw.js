@@ -1,5 +1,5 @@
 /* 로또 마스터 - 오프라인 캐시 (한 번 열면 인터넷 없이도 실행) */
-const CACHE = "lotto-master-1.0.0";
+const CACHE = "lotto-master-1.1.0";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
                 "./icon-maskable-512.png", "./apple-touch-icon.png"];
 self.addEventListener("install", (e) => {

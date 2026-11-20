@@ -135,6 +135,21 @@ table.rep th{color:var(--ink-3);font-weight:600;font-size:11.5px}
 .install.on{display:block}
 footer{color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0 8px;line-height:1.7}
 .hidden{display:none!important}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 12px}
+.tabs::-webkit-scrollbar{display:none}
+.tabs .chip{flex:none}
+.rk-big{font-size:22px;font-weight:800;color:var(--brand);font-variant-numeric:tabular-nums;margin:10px 0 4px}
+.rk-sub{font-size:12.5px;color:var(--ink-3)}
+.rk-list{max-height:360px;overflow-y:auto;margin-top:10px;border-top:1px solid var(--line)}
+.rk-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.rk-row .r{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rk-row .d{color:var(--ink-3);width:48px;flex:none;font-variant-numeric:tabular-nums}
+.rk-row .bs{display:flex;gap:2px}
+.hbars{display:flex;align-items:flex-end;gap:2px;height:140px;border-bottom:1px solid var(--line);position:relative;margin-top:8px}
+.hbars .b{flex:1;background:var(--bar-top);border-radius:3px 3px 0 0;min-height:2px;cursor:pointer}
+.hbars .b.sel{outline:2px solid var(--ink);outline-offset:1px}
+.hbars .exp{position:absolute;left:0;right:0;border-top:1.5px dashed var(--ink-3);pointer-events:none}
+.rk-pane{display:none}.rk-pane.on{display:block}
 </style>
 </head>
 <body>
@@ -243,6 +258,38 @@ footer{color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0 8px;li
       <button class="btn" id="copyBtn">📋 복사</button>
       <button class="btn" id="shareBtn">📤 공유</button>
       <button class="btn" id="csvBtn">💾 CSV</button>
+    </div>
+  </section>
+
+  <!-- 조합 순번 -->
+  <section class="card" id="rankCard">
+    <h2>🔢 조합 순번 분석</h2>
+    <p class="hint">전체 <b>8,145,060</b>개 조합에 작은 번호부터 번호표를 붙인 순번입니다.<br>(1,2,3,4,5,6 = 1번째 · 40~45 = 8,145,060번째)</p>
+    <div class="tabs" id="rkTabs">
+      <button class="chip on" data-p="p1">순번 → 번호</button><button class="chip" data-p="p2">번호 → 순번</button>
+      <button class="chip" data-p="p3">역대 당첨 순번</button><button class="chip" data-p="p4">분포도</button>
+    </div>
+    <div class="rk-pane on" id="p1">
+      <label class="f" for="rkK">몇 번째 조합? (1 ~ 8,145,060)</label>
+      <div class="row"><input id="rkK" type="text" inputmode="numeric" placeholder="예: 1,245,367"><button class="btn primary" id="rkKBtn" style="flex:0 0 auto">보기</button></div>
+      <div id="rkKOut"></div>
+    </div>
+    <div class="rk-pane" id="p2">
+      <label class="f" for="rkN">번호 6개 (쉼표·띄어쓰기 구분)</label>
+      <div class="row"><input id="rkN" type="text" inputmode="numeric" placeholder="예: 4 16 23 30 33 45"><button class="btn primary" id="rkNBtn" style="flex:0 0 auto">계산</button></div>
+      <div id="rkNOut"></div>
+    </div>
+    <div class="rk-pane" id="p3">
+      <label class="f" for="rkQ">회차 검색 (비우면 전체)</label>
+      <input id="rkQ" type="number" inputmode="numeric" placeholder="예: 1">
+      <div class="rk-list" id="rkList"></div>
+    </div>
+    <div class="rk-pane" id="p4">
+      <div class="chips" id="rkBins" style="margin-top:0"><button class="chip" data-b="10">10구간</button><button class="chip on" data-b="20">20구간</button><button class="chip" data-b="40">40구간</button></div>
+      <div class="hbars" id="rkHist" role="img" aria-label="역대 1등 번호의 조합 순번 분포"></div>
+      <div class="axis"><span>1</span><span>200만</span><span>400만</span><span>600만</span><span>814만</span></div>
+      <div class="tip" id="rkTip">막대를 누르면 구간과 횟수가 보입니다.</div>
+      <p class="hint" id="rkSum" style="margin-top:8px"></p>
     </div>
   </section>
 
@@ -573,7 +620,7 @@ footer{color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0 8px;li
 <script>
 (function(){
 "use strict";
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.1.0";
 const E = window.LottoEngine;
 const MIRROR_URL = "https://raw.githubusercontent.com/uriseozz/lotto-data/main/lotto.json";
 const $ = (id) => document.getElementById(id);
@@ -634,7 +681,7 @@ async function updateData(){
       loadData(); renderData();
       if (wasLatest) { applyRecent(S.rangeN ?? 300, false); }
       msg("updateMsg","ok",`✓ ${rows.length}개 회차를 새로 받았습니다 (${maxD()}회까지).`);
-      refreshAnalysis();
+      refreshAnalysis(); rkRefresh();
     } else {
       msg("updateMsg","ok",`✓ 이미 최신입니다 (${have}회).`);
     }
@@ -780,7 +827,7 @@ function renderResults(res, r){
     $("resultList").innerHTML = res.games.map((g,i)=>`
       <div class="game"><div class="head"><span class="no">${String(i+1).padStart(2,"0")}</span><span class="score">${g.total}<small>점</small></span></div>
       <div class="balls">${g.numbers.map(n=>ball(n,"m")).join("")}</div>
-      <div class="meta">번호점수 ${g.numScore} · 패턴적합도 ${g.fitness} · 합계 ${g.sum} · AC ${g.ac} · 홀${g.odd}:짝${6-g.odd} · 고${g.high}:저${6-g.high} · 멸구간 ${g.emptyBands.length?g.emptyBands.join(", "):"없음"}</div></div>`).join("");
+      <div class="meta">🔢 <b>${rankOf(g.numbers).toLocaleString()}번째</b> 조합 · 번호점수 ${g.numScore} · 패턴적합도 ${g.fitness} · 합계 ${g.sum} · AC ${g.ac} · 홀${g.odd}:짝${6-g.odd} · 고${g.high}:저${6-g.high} · 멸구간 ${g.emptyBands.length?g.emptyBands.join(", "):"없음"}</div></div>`).join("");
   }
   card.scrollIntoView({behavior:"smooth", block:"start"});
 }
@@ -812,6 +859,69 @@ function setupInstall(){
   $("installClose").onclick = ()=>{ card.classList.remove("on"); store.set("lm_install_closed", true); };
 }
 
+// ── 조합 순번 ─────────────────────────────────────────
+const TOTAL = 8145060;
+const C = (n,k)=>{ if(k<0||k>n) return 0; let r=1; for(let i=1;i<=k;i++) r=r*(n-k+i)/i; return Math.round(r); };
+const CT = Array.from({length:46},(_,n)=>Array.from({length:7},(_,k)=>C(n,k)));
+function rankOf(nums){ const c=[...nums].sort((a,b)=>a-b); let r=0, prev=0;
+  c.forEach((x,i)=>{ for(let v=prev+1; v<x; v++) r+=CT[45-v][5-i]; prev=x; }); return r+1; }
+function unrank(k){ k-=1; const out=[]; let v=1;
+  for(let i=0;i<6;i++){ while(CT[45-v][5-i]<=k){ k-=CT[45-v][5-i]; v++; } out.push(v); v++; } return out; }
+const balls6 = (c,sz="s") => `<div class="bs">${c.map(n=>ball(n,sz)).join("")}</div>`;
+let rkBins = 20;
+function winnersAt(rk){ return DATA.filter(r=>rankOf(r.n)===rk).map(r=>r.d+"회"); }
+function rkShowK(){
+  const raw=$("rkK").value.replace(/[^0-9]/g,""); const k=parseInt(raw,10);
+  if(!raw){ $("rkKOut").innerHTML=""; return; }
+  if(!(k>=1&&k<=TOTAL)){ msg("rkKOut","err","1 ~ 8,145,060 사이 숫자를 입력하세요."); return; }
+  $("rkK").value=k.toLocaleString(); const c=unrank(k), w=winnersAt(k);
+  $("rkKOut").innerHTML=`<div class="rk-big">${k.toLocaleString()}번째</div><div class="balls">${c.map(n=>ball(n,"m")).join("")}</div>`+
+    `<div class="msg ${w.length?"ok":"warn"}">${w.length?"🎉 역대 1등 당첨번호입니다: "+w.join(", "):"역대 1등 당첨번호 중에는 이 조합이 없습니다."}</div>`;
+}
+function rkShowN(){
+  const nums=[...new Set(($("rkN").value.match(/\d+/g)||[]).map(Number))];
+  if(!$("rkN").value.trim()){ $("rkNOut").innerHTML=""; return; }
+  if(nums.length!==6||nums.some(n=>n<1||n>45)){ msg("rkNOut","err","서로 다른 1~45 번호를 정확히 6개 입력하세요."); return; }
+  const rk=rankOf(nums), w=winnersAt(rk);
+  $("rkNOut").innerHTML=`<div style="margin-top:10px" class="balls">${[...nums].sort((a,b)=>a-b).map(n=>ball(n,"m")).join("")}</div>`+
+    `<div class="rk-big">${rk.toLocaleString()}번째</div><div class="rk-sub">전체의 ${(rk/TOTAL*100).toFixed(2)}% 위치</div>`+
+    (w.length?`<div class="msg ok">🎉 역대 1등 당첨번호입니다: ${w.join(", ")}</div>`:"");
+}
+function rkList(){
+  const q=parseInt($("rkQ").value,10);
+  const rows=[...DATA].reverse().filter(r=>!Number.isFinite(q)||r.d===q);
+  const shown=rows.slice(0,300);
+  $("rkList").innerHTML = shown.map(r=>`<div class="rk-row"><span class="d">${r.d}회</span>${balls6(r.n)}<span class="r">${rankOf(r.n).toLocaleString()}</span></div>`).join("")
+    + (rows.length>shown.length?`<div class="rk-sub" style="padding:8px 0">최근 300회만 표시합니다. 회차를 검색하면 모든 회차를 볼 수 있습니다.</div>`:"")
+    + (!rows.length?`<div class="rk-sub" style="padding:8px 0">해당 회차가 없습니다.</div>`:"");
+}
+function rkHist(){
+  const ranks=DATA.map(r=>rankOf(r.n)), w=TOTAL/rkBins, cnt=new Array(rkBins).fill(0);
+  ranks.forEach(x=>cnt[Math.min(Math.floor((x-1)/w),rkBins-1)]++);
+  const exp=ranks.length/rkBins, max=Math.max(...cnt, exp)*1.1;
+  const lab=i=>`${(Math.floor(i*w)+1).toLocaleString()} ~ ${Math.floor((i+1)*w).toLocaleString()}`;
+  $("rkHist").innerHTML = cnt.map((c,i)=>`<div class="b" data-i="${i}" style="height:${c/max*100}%"></div>`).join("")+`<div class="exp" style="bottom:${exp/max*100}%"></div>`;
+  $("rkHist").querySelectorAll(".b").forEach(b=>b.onclick=()=>{ $("rkHist").querySelectorAll(".sel").forEach(x=>x.classList.remove("sel")); b.classList.add("sel");
+    const i=+b.dataset.i; $("rkTip").innerHTML=`<b>${lab(i)}</b>번째 구간 · 1등 <b>${cnt[i]}회</b> (기대값 ${exp.toFixed(1)}회)`; });
+  const s=[...ranks].sort((a,b)=>a-b), med=s[Math.floor(s.length/2)], mean=Math.round(ranks.reduce((a,b)=>a+b,0)/ranks.length);
+  const hi=cnt.indexOf(Math.max(...cnt)), lo=cnt.indexOf(Math.min(...cnt)), last=DATA[DATA.length-1];
+  $("rkSum").innerHTML=`총 ${ranks.length.toLocaleString()}회 · 점선 = 고르게 나왔을 때 기대값(${exp.toFixed(1)}회)<br>`+
+    `가장 많은 구간: ${lab(hi)} (${cnt[hi]}회)<br>가장 적은 구간: ${lab(lo)} (${cnt[lo]}회)<br>`+
+    `평균 ${mean.toLocaleString()} · 중앙값 ${med.toLocaleString()} (이론상 4,072,530)<br>최근 ${last.d}회: ${rankOf(last.n).toLocaleString()}번째<br>`+
+    `모든 조합의 확률이 같아서 막대가 대체로 평평한 것이 정상이며, 차이는 우연에 의한 변동입니다.`;
+}
+function rkRefresh(){ const on=document.querySelector("#rkTabs .chip.on").dataset.p; if(on==="p3") rkList(); if(on==="p4") rkHist(); }
+function setupRank(){
+  document.querySelectorAll("#rkTabs .chip").forEach(c=>c.onclick=()=>{
+    document.querySelectorAll("#rkTabs .chip").forEach(x=>x.classList.toggle("on",x===c));
+    document.querySelectorAll(".rk-pane").forEach(p=>p.classList.toggle("on",p.id===c.dataset.p)); rkRefresh(); });
+  $("rkKBtn").onclick=rkShowK; $("rkK").addEventListener("keydown",e=>{ if(e.key==="Enter") rkShowK(); });
+  $("rkNBtn").onclick=rkShowN; $("rkN").addEventListener("keydown",e=>{ if(e.key==="Enter") rkShowN(); });
+  $("rkQ").addEventListener("input",rkList);
+  document.querySelectorAll("#rkBins .chip").forEach(c=>c.onclick=()=>{ rkBins=+c.dataset.b;
+    document.querySelectorAll("#rkBins .chip").forEach(x=>x.classList.toggle("on",x===c)); $("rkTip").textContent="막대를 누르면 구간과 횟수가 보입니다."; rkHist(); });
+}
+
 // ── 시작 ─────────────────────────────────────────────────
 function init(){
   loadData(); renderData();
@@ -840,14 +950,14 @@ function init(){
     if (navigator.share){ try{ await navigator.share({title:"로또 마스터 추천 번호", text:t}); }catch(e){} }
     else toast(await copyText(t) ? "공유 기능이 없어 복사했습니다" : "공유할 수 없습니다"); };
   $("csvBtn").onclick = ()=>{ if(!lastGames.length) return;
-    const rows=[["게임","N1","N2","N3","N4","N5","N6","종합점수","번호점수","패턴적합도","합계","AC","홀짝","고저","멸구간"]].concat(
-      lastGames.map((g,i)=>[i+1,...g.numbers,g.total,g.numScore,g.fitness,g.sum,g.ac,`홀${g.odd}·짝${6-g.odd}`,`고${g.high}·저${6-g.high}`,g.emptyBands.join(" ")||"없음"]));
+    const rows=[["게임","N1","N2","N3","N4","N5","N6","순번","종합점수","번호점수","패턴적합도","합계","AC","홀짝","고저","멸구간"]].concat(
+      lastGames.map((g,i)=>[i+1,...g.numbers,rankOf(g.numbers),g.total,g.numScore,g.fitness,g.sum,g.ac,`홀${g.odd}·짝${6-g.odd}`,`고${g.high}·저${6-g.high}`,g.emptyBands.join(" ")||"없음"]));
     const blob=new Blob(["﻿"+rows.map(r=>r.join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"});
     const d=new Date(), name=`로또추천_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}_${String(d.getHours()).padStart(2,"0")}${String(d.getMinutes()).padStart(2,"0")}.csv`;
     const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
     toast("CSV 파일을 저장했습니다 (다운로드 폴더)"); };
   $("verTxt").textContent = "로또 마스터 모바일 v" + APP_VERSION;
-  onRangeInput(); setupInstall();
+  onRangeInput(); setupInstall(); setupRank();
   if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) navigator.serviceWorker.register("sw.js").catch(()=>{});
 }
 init();
