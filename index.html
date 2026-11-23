@@ -150,6 +150,25 @@ footer{color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0 8px;li
 .hbars .b.sel{outline:2px solid var(--ink);outline-offset:1px}
 .hbars .exp{position:absolute;left:0;right:0;border-top:1.5px dashed var(--ink-3);pointer-events:none}
 .rk-pane{display:none}.rk-pane.on{display:block}
+/* ELF 종합 · 균형조합 */
+textarea{width:100%;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:15px;padding:10px 12px;outline:none;font-family:inherit;resize:vertical;line-height:1.6}
+textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.elf-sub{margin:8px 0 4px;padding:10px 12px;border:1px dashed var(--line);border-radius:12px}
+.elf-m{padding:10px 0;border-top:1px solid var(--line)}
+.elf-m:first-child{border-top:0}
+.elf-m .h{display:flex;justify-content:space-between;font-size:14px}
+.elf-m .h span{color:var(--ink-3);font-size:12.5px}
+.elf-m .d{font-size:12px;color:var(--ink-3);margin:2px 0 6px}
+.elf-balls{display:flex;flex-wrap:wrap;gap:3px}
+.elf-w{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.elf-r{display:inline-flex;flex-direction:column;align-items:center;gap:1px}
+.elf-r i{font-style:normal;font-size:10px;color:var(--ink-3)}
+.gbox{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.gbox .gt{font-size:13.5px}
+.gbox table.rep{background:transparent}
+.elf-list{max-height:420px;overflow-y:auto;margin-top:10px;border-top:1px solid var(--line)}
+.elf-g{display:flex;align-items:center;gap:4px;padding:7px 0;border-bottom:1px solid var(--line)}
+.elf-g .no{width:34px;flex:none;color:var(--ink-3);font-size:12px;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -159,7 +178,7 @@ footer{color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0 8px;li
       <img class="logo" src="icon-192.png" alt="">
       <div>
         <h1>로또 마스터</h1>
-        <div class="sub">7종 수리·통계 알고리즘 × 몬테카를로 시뮬레이션</div>
+        <div class="sub">7종 수리·통계 알고리즘 × ELF 종합 · 균형조합 보장</div>
       </div>
     </div>
   </header>
@@ -291,6 +310,56 @@ footer{color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0 8px;li
       <div class="tip" id="rkTip">막대를 누르면 구간과 횟수가 보입니다.</div>
       <p class="hint" id="rkSum" style="margin-top:8px"></p>
     </div>
+  </section>
+
+  <!-- ELF 종합 · 균형조합 -->
+  <section class="card" id="elfCard">
+    <details class="adv" id="elfBox">
+      <summary><span>🧩 ELF 종합 · 균형조합 보장</span></summary>
+      <p class="hint" style="margin-top:8px">엑셀 ELF 파일 세트(당첨횟수순·후나츠·추적·동반 → ELF 관리 → 25수 균형조합)를 한 번에 처리합니다. 보유한 <b>전체 회차</b>로 계산합니다.</p>
+      <div class="latest" id="elfBase" style="margin-top:0"></div>
+
+      <h2 style="margin-top:16px"><span class="step">①</span>번호 예측 4종</h2>
+      <details class="adv elf-sub" id="elfSet">
+        <summary><span style="font-weight:500;font-size:13.5px">⚙️ 방법별 설정</span></summary>
+        <div class="row" style="margin-top:10px">
+          <div><label class="f">당첨횟수순 개수</label><input id="eFreqN" type="number" inputmode="numeric" min="6" max="45"></div>
+          <div><label class="f">추적 숫자 개수</label><input id="eTrackN" type="number" inputmode="numeric" min="6" max="45"></div>
+        </div>
+        <div class="tg"><div><div class="t">당첨횟수에 보너스 포함</div><div class="d">엑셀 방식</div></div><label class="sw"><input type="checkbox" id="eFreqB"><span></span></label></div>
+        <div class="row" style="margin-top:6px">
+          <div><label class="f">후나츠: 최근 몇 회</label><input id="eFuWin" type="number" inputmode="numeric" min="6" max="60"></div>
+          <div><label class="f">동반 숫자 개수</label><input id="eCompN" type="number" inputmode="numeric" min="6" max="45"></div>
+        </div>
+        <label class="f" style="margin-top:10px">후나츠: 이 횟수만큼 나온 번호 선택</label>
+        <div class="chips" id="eFuHits" style="margin-top:4px"></div>
+        <div class="tg" style="margin-top:6px"><div><div class="t">[2] 직전 회차 번호 포함</div></div><label class="sw"><input type="checkbox" id="eFuPrev"><span></span></label></div>
+        <div class="tg"><div><div class="t">[3] 직전 번호의 이웃수 포함</div><div class="d">예: 7 → 6, 8</div></div><label class="sw"><input type="checkbox" id="eFuNb"><span></span></label></div>
+        <div class="tg"><div><div class="t">[4] 직전 번호와 끝수 같은 번호</div></div><label class="sw"><input type="checkbox" id="eFuLd"><span></span></label></div>
+        <label class="f" style="margin-top:8px">동반 숫자: 고정수 (최대 10개, 비우면 전체 동반 횟수)</label>
+        <input id="eCompFix" type="text" placeholder="예: 7 14 23">
+      </details>
+      <div id="elfMethods"></div>
+
+      <h2 style="margin-top:16px"><span class="step">②</span>ELF 종합 순위</h2>
+      <p class="hint">번호 점수 = Σ(방법 가중치 × 선택 여부) + 가산점. 동점이면 누적 당첨횟수가 많은 번호가 앞.</p>
+      <div class="elf-w" id="elfWeights"></div>
+      <label class="f" style="margin-top:10px">➕ 가산점 (번호:점수, 쉼표 구분 — 예: 7:2, 14:1)</label>
+      <input id="eBonus" type="text" placeholder="예: 7:2, 14:1">
+      <div id="elfBonusMsg"></div>
+      <div style="font-size:13px;color:var(--ink-2);margin:12px 0 6px">종합 상위 25개 (순위 순)</div>
+      <div class="elf-balls" id="elfTop"></div>
+
+      <h2 style="margin-top:18px"><span class="step">③</span>25수 균형조합 · 보장 검사</h2>
+      <p class="hint">25개 번호로 238조합을 만듭니다 (엑셀과 같은 배치). 앞에 적은 번호일수록 더 많은 조합에 들어갑니다.</p>
+      <div class="row"><button class="btn" id="eFill">↻ 종합 상위 25개로 채우기</button></div>
+      <label class="f" style="margin-top:10px">25개 번호 (가능성이 높다고 보는 순서대로, 수정 가능)</label>
+      <textarea id="eWheel" rows="3"></textarea>
+      <div class="tg" style="margin-top:6px"><div><div class="t">🎛️ 통계 필터 (엑셀 13개 기준)</div><div class="d" id="eCovTxt"></div></div><label class="sw"><input type="checkbox" id="eFilter"><span></span></label></div>
+      <div class="rng" id="eCovBox" style="margin-top:0"><div class="lab"><span>허용 구간: 역대 당첨조합의 중앙</span><b id="eCovV"></b></div><input type="range" id="eCov" min="0.80" max="0.99" step="0.01"></div>
+      <button class="btn primary" id="eRun" style="width:100%;margin-top:12px">🧮 균형조합 만들기 · 보장 검사</button>
+      <div id="elfResult"></div>
+    </details>
   </section>
 
   <!-- 리포트 -->
@@ -620,7 +689,7 @@ footer{color:var(--ink-3);font-size:12px;text-align:center;padding:12px 0 8px;li
 <script>
 (function(){
 "use strict";
-const APP_VERSION = "1.1.0";
+const APP_VERSION = "1.2.0";
 const E = window.LottoEngine;
 const MIRROR_URL = "https://raw.githubusercontent.com/uriseozz/lotto-data/main/lotto.json";
 const $ = (id) => document.getElementById(id);
@@ -959,6 +1028,422 @@ function init(){
   $("verTxt").textContent = "로또 마스터 모바일 v" + APP_VERSION;
   onRangeInput(); setupInstall(); setupRank();
   if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+init();
+})();
+</script>
+<script>/* ELF 자동 종합 · 25수 균형조합 엔진 (PC판 elf_engine.py 의 JavaScript 이식판)
+ *  ① 당첨횟수순 ② 후나츠 사카에 ③ 추적 숫자 ④ 동반 숫자 → ELF 종합 순위
+ *  25수 균형조합(238조합) · 13기준 필터 · 보장 검사(177,100가지 전수) · 보장 복구
+ *  rows: [{d: 회차, n: [6개 오름차순], b: 보너스}] 회차 오름차순
+ */
+(function (root) {
+  "use strict";
+  const N = 45;
+  const METHODS = { freq: "① 당첨횟수순", funatsu: "② 후나츠 사카에", tracking: "③ 추적 숫자", companion: "④ 동반 숫자" };
+  const BANDS = [[1, 10], [11, 20], [21, 30], [31, 40], [41, 45]];
+
+  const rankOrder = (score, preferSmall = true) =>
+    [...Array(N).keys()].sort((a, b) => (score[b] - score[a]) || (preferSmall ? a - b : b - a)).map((i) => i + 1);
+  const topN = (score, n, preferSmall = true) => rankOrder(score, preferSmall).slice(0, n).sort((a, b) => a - b);
+
+  // ── ① 번호 예측 4종 ─────────────────────────────────────
+  function freq(rows, n = 25, includeBonus = true) {
+    const s = new Array(N).fill(0);
+    for (const r of rows) { for (const k of r.n) s[k - 1]++; if (includeBonus && r.b > 0) s[r.b - 1]++; }
+    return { selected: topN(s, n), score: s, rank: rankOrder(s),
+             note: `${rows.length}회 누적 출현 횟수${includeBonus ? "(보너스 포함)" : ""} 상위 ${n}개` };
+  }
+
+  function funatsu(rows, win = 24, hits = [2, 3, 4], prev = false, nb = false, ld = false) {
+    const cnt = new Array(N).fill(0);
+    for (const r of rows.slice(-win)) for (const k of r.n) cnt[k - 1]++;
+    const last = rows[rows.length - 1].n, H = new Set(hits);
+    const sel = new Set();
+    for (let k = 0; k < N; k++) if (H.has(cnt[k])) sel.add(k + 1);
+    if (prev) last.forEach((x) => sel.add(x));
+    if (nb) last.forEach((x) => { sel.add(x === 1 ? N : x - 1); sel.add(x === N ? 1 : x + 1); });
+    if (ld) { const dg = new Set(last.map((x) => x % 10)); for (let k = 1; k <= N; k++) if (dg.has(k % 10)) sel.add(k); }
+    const rules = (hits.length ? [`최근 ${win}회 중 ${[...hits].sort().join("/")}회 출현`] : [])
+      .concat([["직전 회차 번호", prev], ["이웃수", nb], ["끝수", ld]].filter((x) => x[1]).map((x) => x[0]));
+    return { selected: [...sel].sort((a, b) => a - b), score: cnt, rank: rankOrder(cnt), note: rules.join(" + ") || "선택된 규칙 없음" };
+  }
+
+  function tracking(rows, n = 25) {
+    const T = Array.from({ length: N }, () => new Array(N).fill(0));
+    for (let t = 0; t + 1 < rows.length; t++) for (const i of rows[t].n) for (const j of rows[t + 1].n) T[i - 1][j - 1]++;
+    const last = rows[rows.length - 1].n, s = new Array(N).fill(0);
+    for (const i of last) for (let j = 0; j < N; j++) s[j] += T[i - 1][j];
+    return { selected: topN(s, n, false), score: s, rank: rankOrder(s, false),
+             note: `직전 회차 ${last.join(", ")} 다음에 자주 나온 번호 상위 ${n}개` };
+  }
+
+  function companion(rows, fixed = [], n = 25) {
+    const C = Array.from({ length: N }, () => new Array(N).fill(0));
+    for (const r of rows) for (const i of r.n) for (const j of r.n) if (i !== j) C[i - 1][j - 1]++;
+    const fx = [...new Set(fixed)].filter((x) => x >= 1 && x <= N).slice(0, 10);
+    const s = new Array(N).fill(0);
+    if (fx.length) { for (const f of fx) for (let j = 0; j < N; j++) s[j] += C[f - 1][j]; }
+    else { for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) s[j] += C[i][j]; }
+    const rest = rankOrder(s, false).filter((x) => !fx.includes(x));
+    const sel = fx.concat(rest.slice(0, Math.max(n - fx.length, 0))).sort((a, b) => a - b);
+    return { selected: sel, score: s, rank: rankOrder(s, false),
+             note: fx.length ? `고정수 ${fx.join(", ")} 와 자주 함께 나온 번호 (고정수 포함 ${sel.length}개)` : `고정수 없음 → 전체 동반 횟수 상위 ${n}개` };
+  }
+
+  // ── ② ELF 종합 ─────────────────────────────────────────
+  function combine(results, weights, bonus = {}, freqRank = null) {
+    const pos = {}; if (freqRank) freqRank.forEach((x, i) => (pos[x] = i + 1));
+    const rows = [];
+    for (let k = 1; k <= N; k++) {
+      const picks = {}; let score = 0;
+      for (const key of Object.keys(results)) {
+        const on = results[key].selected.includes(k) ? 1 : 0;
+        picks[key] = on; score += (weights[key] || 0) * on;
+      }
+      const add = +(bonus[k] || 0); score += add;
+      rows.push({ n: k, picks, bonus: add, score: Math.round(score * 100) / 100, sortKey: score + (freqRank ? 0.1 / pos[k] : 0) });
+    }
+    rows.sort((a, b) => b.sortKey - a.sortKey);
+    rows.forEach((r, i) => (r.rank = i + 1));
+    return rows;
+  }
+
+  function parseBonus(text) {
+    const out = {}, bad = [];
+    for (let tok of String(text || "").replace(/，/g, ",").split(",")) {
+      tok = tok.trim(); if (!tok) continue;
+      const m = tok.match(/^(\d+)\s*:\s*(-?\d+(?:\.\d+)?)$/);
+      if (m && +m[1] >= 1 && +m[1] <= N) out[+m[1]] = +m[2]; else bad.push(tok);
+    }
+    return { bonus: out, bad };
+  }
+
+  // ── ③ 25수 균형조합 ─────────────────────────────────────
+  const WHEEL25 = [[1,5,6,14,17,18],[0,1,11,13,18,21],[1,10,11,15,18,20],[1,2,13,18,21,23],[1,4,12,16,18,22],[1,4,8,12,16,18],[1,4,12,16,18,19],[0,1,7,13,18,22],[1,3,7,9,18,24],[1,4,8,18,19,22],[0,1,8,10,14,18],[0,1,4,18,19,23],[1,5,9,11,19,21],[1,2,4,5,15,22],[1,2,4,5,16,22],[1,2,3,4,5,22],[1,5,7,12,20,23],[1,3,4,5,15,16],[1,5,8,10,13,24],[1,2,6,7,8,11],[1,3,11,12,13,17],[0,1,4,7,11,19],[0,1,4,11,22,23],[1,4,11,14,22,24],[0,1,4,10,11,14],[1,4,11,16,23,24],[1,4,11,14,16,24],[1,6,12,15,21,24],[0,1,4,7,21,22],[1,4,7,16,17,21],[0,1,4,7,21,23],[1,4,10,16,21,22],[1,4,10,17,21,22],[1,3,8,14,20,21],[0,1,10,14,19,21],[0,1,2,12,15,17],[1,2,9,10,12,14],[1,2,3,4,15,16],[0,1,2,9,15,16],[1,2,17,19,20,24],[1,4,8,12,19,22],[1,4,6,16,20,22],[1,4,6,13,20,22],[1,4,6,9,20,22],[1,3,6,10,19,23],[1,4,6,9,13,16],[0,1,7,10,14,22],[0,1,7,13,19,22],[1,4,7,16,17,22],[1,7,13,14,15,19],[0,1,7,8,14,23],[1,4,7,10,16,17],[0,1,4,7,13,23],[1,3,4,15,16,22],[1,4,8,16,19,22],[1,4,9,13,16,22],[1,4,14,16,22,23],[1,4,14,22,23,24],[1,8,9,15,17,23],[0,1,10,13,14,23],[1,4,9,13,16,20],[4,5,7,11,13,18],[0,4,5,11,13,18],[5,16,18,20,21,24],[2,3,5,12,15,18],[2,3,5,8,12,18],[2,3,5,12,18,19],[5,8,12,15,18,19],[5,9,10,18,22,23],[3,6,11,18,21,22],[0,4,11,18,21,22],[2,9,11,16,17,18],[8,11,12,14,18,23],[11,12,14,18,23,24],[0,7,10,11,18,19],[0,7,11,18,19,23],[8,11,14,18,19,24],[0,11,13,14,18,19],[7,8,10,12,18,21],[7,10,12,18,19,21],[7,10,12,17,18,21],[8,12,17,18,19,21],[0,7,14,18,19,21],[0,4,10,18,21,22],[4,9,14,15,18,21],[0,10,13,18,21,23],[2,4,6,10,18,24],[2,7,14,18,20,22],[2,3,8,15,18,19],[6,8,9,12,18,20],[6,9,12,18,19,20],[6,9,12,13,18,20],[8,12,16,18,19,22],[8,12,13,18,19,20],[8,12,18,19,23,24],[6,7,15,16,18,23],[6,8,9,13,18,19],[7,8,10,17,18,19],[0,4,7,10,14,18],[13,15,17,18,22,24],[0,14,18,19,22,23],[3,10,13,14,16,18],[3,4,17,18,20,23],[2,3,5,11,15,24],[2,3,5,11,23,24],[2,3,5,11,14,24],[5,6,10,11,12,16],[0,5,9,11,12,15],[0,5,7,11,14,22],[5,8,11,17,20,22],[5,11,14,15,23,24],[2,3,5,7,17,21],[2,3,5,10,15,21],[5,12,13,14,21,22],[4,5,6,8,21,23],[5,7,10,15,17,21],[0,2,5,6,12,17],[2,3,5,6,15,20],[0,2,5,6,8,20],[2,3,5,6,9,13],[2,3,5,7,15,17],[2,3,5,7,10,17],[2,3,5,15,16,22],[2,3,5,8,15,19],[2,3,5,9,13,15],[0,2,5,15,17,24],[2,3,5,14,15,23],[0,2,5,9,16,20],[2,3,5,9,13,20],[0,2,3,5,9,17],[0,3,5,6,12,16],[0,5,8,12,17,20],[0,5,8,9,12,24],[4,5,9,12,17,24],[5,6,7,19,22,24],[0,3,5,6,15,16],[5,6,9,13,15,20],[0,5,6,16,17,24],[0,5,6,9,20,24],[5,7,8,9,14,16],[0,5,8,15,16,17],[0,5,8,9,15,20],[0,3,5,9,15,24],[0,3,5,8,16,20],[4,5,10,14,19,20],[5,13,16,17,19,23],[2,4,11,12,20,21],[0,7,10,11,13,21],[7,10,11,17,21,24],[7,10,11,21,23,24],[7,10,11,14,21,24],[8,11,13,15,16,21],[0,10,11,19,21,23],[11,14,17,21,23,24],[0,4,11,14,21,23],[2,10,11,13,19,22],[2,3,11,14,15,23],[7,9,11,12,15,22],[8,11,12,14,19,23],[8,11,12,14,19,24],[4,6,11,15,17,19],[6,9,11,13,14,23],[6,9,11,13,20,24],[6,9,11,20,23,24],[6,9,11,14,20,24],[7,10,11,14,17,23],[3,7,11,16,19,20],[0,10,11,13,19,22],[11,14,16,22,23,24],[3,4,8,9,10,11],[0,8,11,13,19,23],[11,13,14,20,23,24],[2,6,14,16,19,21],[2,3,7,10,15,21],[2,8,9,21,22,24],[2,3,10,15,17,21],[3,9,12,16,21,23],[6,7,9,10,13,21],[6,7,10,17,20,21],[6,9,13,17,20,21],[7,10,16,17,21,22],[7,8,10,17,19,21],[7,9,10,13,17,21],[7,9,10,13,20,21],[7,10,14,17,21,23],[15,19,20,21,22,23],[0,4,13,19,21,22],[0,13,14,21,22,23],[3,4,13,19,21,24],[2,6,12,17,22,23],[0,2,6,8,12,15],[0,2,6,8,12,24],[2,7,12,13,16,24],[2,3,8,12,15,19],[0,2,3,12,15,20],[0,2,8,9,12,16],[0,2,3,12,16,17],[2,3,6,13,15,20],[2,3,6,9,15,20],[0,2,6,16,17,20],[0,2,6,9,16,24],[0,2,3,6,20,24],[2,4,7,9,19,23],[0,2,3,8,15,17],[2,3,14,15,23,24],[2,8,10,16,20,23],[2,4,8,13,14,17],[3,4,6,7,12,14],[6,8,9,12,13,19],[0,3,6,9,12,20],[7,8,10,12,17,19],[3,10,12,20,22,24],[4,10,12,13,15,23],[12,14,15,16,17,20],[0,12,15,16,20,24],[0,3,8,12,16,24],[0,9,12,16,17,24],[6,7,10,13,17,20],[6,7,9,10,17,20],[6,8,10,14,15,22],[6,9,13,16,20,22],[0,3,6,8,15,24],[0,6,9,15,17,20],[6,8,9,13,19,20],[3,6,8,16,17,24],[0,3,6,8,9,16],[0,3,6,8,9,17],[6,9,13,14,23,24],[6,9,13,14,20,23],[3,7,8,13,22,23],[0,4,7,10,22,23],[0,4,7,13,14,22],[4,7,8,15,20,24],[7,10,14,17,23,24],[3,9,14,17,19,22],[9,10,15,16,19,24],[0,3,8,17,20,24],[0,4,10,13,14,19]];
+
+  function wheel(nums) {
+    if (nums.length !== 25 || new Set(nums).size !== 25) throw new Error("서로 다른 번호 25개가 필요합니다.");
+    return WHEEL25.map((idx) => idx.map((i) => nums[i]).sort((a, b) => a - b));
+  }
+
+  const CRITERIA = { even: "짝수 개수", odd: "홀수 개수", high: "고번호(23~45) 개수", low: "저번호(1~22) 개수", sum: "합계",
+    b1: "1~10 개수", b2: "11~20 개수", b3: "21~30 개수", b4: "31~40 개수", b5: "41~45 개수", endsum: "끝수 합", ac: "AC값",
+    empty: "빈 번호대 1개 이상" };
+
+  function feat(c) {
+    let even = 0, high = 0, sum = 0, endsum = 0;
+    const band = [0, 0, 0, 0, 0], diffs = new Set();
+    for (let i = 0; i < 6; i++) {
+      const x = c[i]; if (x % 2 === 0) even++; if (x >= 23) high++; sum += x; endsum += x % 10;
+      band[Math.min(Math.floor((x - 1) / 10), 4)]++;
+      for (let j = i + 1; j < 6; j++) diffs.add(Math.abs(c[j] - x));
+    }
+    return { even, odd: 6 - even, high, low: 6 - high, sum, endsum, ac: diffs.size - 5,
+             b1: band[0], b2: band[1], b3: band[2], b4: band[3], b5: band[4], empty: band.filter((v) => v === 0).length };
+  }
+
+  function percentile(sorted, q) { // numpy / 엑셀 PERCENTILE 과 같은 선형 보간
+    const h = (sorted.length - 1) * q, lo = Math.floor(h), hi = Math.ceil(h);
+    return sorted[lo] + (sorted[hi] - sorted[lo]) * (h - lo);
+  }
+
+  function bounds(rows, coverage = 0.95) {
+    const fs = rows.map((r) => feat(r.n)), out = {};
+    const lo = (1 - coverage) / 2, hi = coverage + (1 - coverage) / 2;
+    for (const k of Object.keys(CRITERIA)) {
+      if (k === "empty") continue;
+      const v = fs.map((f) => f[k]).sort((a, b) => a - b);
+      out[k] = [percentile(v, lo), percentile(v, hi)];
+    }
+    return out;
+  }
+
+  function passes(c, bd, use) {
+    const f = feat(c);
+    for (const k of use) {
+      if (k === "empty") { if (f.empty < 1) return false; }
+      else if (f[k] < bd[k][0] || f[k] > bd[k][1]) return false;
+    }
+    return true;
+  }
+
+  function filterCombos(C, bd, use) {
+    const mask = C.map((c) => passes(c, bd, use)), dropped = {};
+    for (const k of use) dropped[k] = C.filter((c) => !passes(c, bd, [k])).length;
+    return { mask, dropped };
+  }
+
+  function historyPassRate(rows, bd, use) {
+    return rows.length ? rows.filter((r) => passes(r.n, bd, use)).length / rows.length : 0;
+  }
+
+  // 25개 중 6개를 고르는 모든 경우(177,100가지) = 가능한 당첨번호, 비트마스크로 저장
+  let SUBS = null;
+  function subsets() {
+    if (SUBS) return SUBS;
+    const out = new Uint32Array(177100); let p = 0;
+    for (let a = 0; a < 25; a++) for (let b = a + 1; b < 25; b++) for (let c = b + 1; c < 25; c++)
+      for (let d = c + 1; d < 25; d++) for (let e = d + 1; e < 25; e++) for (let f = e + 1; f < 25; f++)
+        out[p++] = (1 << a) | (1 << b) | (1 << c) | (1 << d) | (1 << e) | (1 << f);
+    return (SUBS = out);
+  }
+  const pop = (x) => { x -= (x >>> 1) & 0x55555555; x = (x & 0x33333333) + ((x >>> 2) & 0x33333333); return (((x + (x >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24; };
+  function maskOf(c, pool) { const idx = {}; pool.forEach((x, i) => (idx[x] = i)); let m = 0; for (const x of c) m |= 1 << idx[x]; return m >>> 0; }
+
+  function bestMatch(C, pool) {
+    const S = subsets(), T = Uint32Array.from(C.map((c) => maskOf(c, pool)));
+    const best = new Uint8Array(S.length);
+    for (let s = 0; s < S.length; s++) {
+      const v = S[s]; let b = 0;
+      for (let t = 0; t < T.length && b < 6; t++) { const m = pop(v & T[t]); if (m > b) b = m; }
+      best[s] = b;
+    }
+    return best;
+  }
+
+  function summary(best) {
+    const dist = {}; let min = 6;
+    for (const b of best) { dist[b] = (dist[b] || 0) + 1; if (b < min) min = b; }
+    return { total: best.length, min: best.length ? min : 0, dist };
+  }
+
+  const probAllInPool = () => 177100 / 8145060;
+
+  function makeRng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+  // 탐욕적 집합 덮개: fail(깨진 경우 마스크) 를 cand(후보 마스크) 로 최대한 적은 개수로 덮기
+  function greedyCover(failMasks, candMasks, target, limit) {
+    const F = failMasks.length, K = candMasks.length;
+    const byCand = Array.from({ length: K }, () => []), byFail = Array.from({ length: F }, () => []);
+    for (let f = 0; f < F; f++) { const v = failMasks[f]; for (let k = 0; k < K; k++) if (pop(v & candMasks[k]) >= target) { byCand[k].push(f); byFail[f].push(k); } }
+    const gain = byCand.map((l) => l.length), alive = new Uint8Array(F).fill(1), picked = [];
+    while (picked.length < limit) {
+      let j = -1, g = 0; for (let k = 0; k < K; k++) if (gain[k] > g) { g = gain[k]; j = k; }
+      if (j < 0) break;
+      picked.push(j);
+      for (const f of byCand[j]) if (alive[f]) { alive[f] = 0; for (const k of byFail[f]) gain[k]--; }
+    }
+    const left = []; for (let f = 0; f < F; f++) if (alive[f]) left.push(failMasks[f]);
+    return { picked, left };
+  }
+
+  function unmask(m, pool) { const out = []; for (let i = 0; i < 25; i++) if (m & (1 << i)) out.push(pool[i]); return out; }
+
+  /* 보장 복구
+   *  candidates 가 있으면 그 안에서만 (예: 필터에서 뺐던 원래 조합)
+   *  없으면 '필터를 통과하는' 새 조합으로 메움 → 남는 경우는 필터를 지키며 덮는 게 수학적으로 불가능 */
+  function repair(kept, pool, target = 4, opt = {}) {
+    const { candidates = null, bd = null, use = [], maxAdd = 300 } = opt;
+    const S = subsets(), best = bestMatch(kept, pool);
+    let fail = []; for (let s = 0; s < S.length; s++) if (best[s] < target) fail.push(S[s]);
+    const info = { beforeFail: fail.length, impossible: 0 };
+    const added = [];
+    if (fail.length && candidates) {
+      const cm = candidates.map((c) => maskOf(c, pool));
+      const r = greedyCover(fail, cm, target, maxAdd);
+      r.picked.forEach((j) => added.push(candidates[j])); fail = r.left;
+    } else if (fail.length) {
+      const ok = (m) => !use.length || passes(unmask(m, pool), bd, use);
+      const rng = makeRng(0);
+      for (let round = 0; round < 30 && fail.length && added.length < maxAdd; round++) {
+        const pick = fail.length <= 1500 ? fail.slice() : Array.from({ length: 1500 }, () => fail[Math.floor(rng() * fail.length)]);
+        const cand = new Set();
+        for (const m of pick) {
+          if (ok(m)) cand.add(m);
+          const bits = []; for (let i = 0; i < 25; i++) if (m & (1 << i)) bits.push(i);
+          const out = bits[Math.floor(rng() * 6)], inn = Math.floor(rng() * 25);
+          if (!(m & (1 << inn))) { const m2 = ((m & ~(1 << out)) | (1 << inn)) >>> 0; if (ok(m2)) cand.add(m2); }
+        }
+        const cm = [...cand]; if (!cm.length) break;
+        const r = greedyCover(fail, cm, target, maxAdd - added.length);
+        if (!r.picked.length) break;
+        r.picked.forEach((j) => added.push(unmask(cm[j], pool))); fail = r.left;
+      }
+      if (fail.length && added.length < maxAdd) { // 마무리: 필터 통과 조합 전체를 후보로 전수 확인
+        const all = []; for (const m of S) if (ok(m)) all.push(m);
+        const r = greedyCover(fail, all, target, maxAdd - added.length);
+        r.picked.forEach((j) => added.push(unmask(all[j], pool))); fail = r.left;
+        info.impossible = fail.length;
+      }
+    }
+    info.afterFail = fail.length; info.added = added.length;
+    return { added, info };
+  }
+
+  const api = { N, METHODS, CRITERIA, WHEEL25, freq, funatsu, tracking, companion, combine, parseBonus, wheel, feat, bounds,
+    filterCombos, historyPassRate, bestMatch, summary, probAllInPool, repair, passes };
+  if (typeof module !== "undefined" && module.exports) module.exports = api; else root.ELF = api;
+})(typeof self !== "undefined" ? self : this);
+</script>
+<script>(function(){
+"use strict";
+const X = window.ELF;
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
+};
+const DEF = { freqN:25, freqB:true, trackN:25, compN:25, fuWin:24, fuHits:[2,3,4], fuPrev:false, fuNb:false, fuLd:false,
+  compFix:"", weights:{freq:1,funatsu:1,tracking:1,companion:1}, bonus:"", wheel:"", filter:true, cov:0.95 };
+let S = Object.assign({}, DEF, store.get("lm_elf", {}));
+S.weights = Object.assign({}, DEF.weights, S.weights || {});
+const save = () => store.set("lm_elf", S);
+
+const color = (n) => n<=10?"var(--b1)":n<=20?"var(--b2)":n<=30?"var(--b3)":n<=40?"var(--b4)":"var(--b5)";
+const ball = (n, size="s") => `<span class="ball ${size}" style="background:${color(n)}">${n}</span>`;
+const fmt = (x) => x.toLocaleString();
+function toast(m){ const t=$("toast"); if(!t) return; t.textContent=m; t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),2200); }
+function parseNums(text){
+  const nums=[], bad=[];
+  for (let tok of String(text||"").replace(/[，、]/g,",").replace(/\s+/g,",").split(",")){
+    tok=tok.trim(); if(!tok) continue;
+    if (/^\d+$/.test(tok) && +tok>=1 && +tok<=45){ if(!nums.includes(+tok)) nums.push(+tok); } else bad.push(tok);
+  }
+  return {nums, bad};
+}
+
+// 메인 화면과 같은 데이터 (내장 + [업데이트]로 받은 회차)
+function loadRows(){
+  const map = new Map();
+  for (const r of SEED) map.set(r[0], {d:r[0], n:r.slice(1,7).map(Number).sort((a,b)=>a-b), b:+r[7]||0});
+  for (const r of store.get("lm_extra", [])) if (r && Number.isInteger(r.d) && Array.isArray(r.n) && r.n.length===6)
+    map.set(r.d, {d:r.d, n:[...r.n].sort((a,b)=>a-b), b:+r.b||0});
+  return [...map.values()].sort((a,b)=>a.d-b.d);
+}
+
+let ROWS=[], RES=null, TOP25=[], LAST=null;
+
+function compute(){
+  ROWS = loadRows();
+  const L = ROWS[ROWS.length-1];
+  $("elfBase").innerHTML = `<span style="flex-basis:100%;margin-bottom:4px">기준 회차 <b style="color:var(--ink)">${L.d}회</b> (보유 ${ROWS[0].d}~${L.d}회)</span>` + L.n.map(n=>ball(n)).join("");
+  const fix = parseNums(S.compFix).nums.slice(0,10);
+  RES = {
+    freq: X.freq(ROWS, +S.freqN, S.freqB),
+    funatsu: X.funatsu(ROWS, +S.fuWin, S.fuHits, S.fuPrev, S.fuNb, S.fuLd),
+    tracking: X.tracking(ROWS, +S.trackN),
+    companion: X.companion(ROWS, fix, +S.compN),
+  };
+  $("elfMethods").innerHTML = Object.keys(RES).map(k => `
+    <div class="elf-m"><div class="h"><b>${X.METHODS[k]}</b> <span>${RES[k].selected.length}개</span></div>
+    <div class="d">${RES[k].note}</div><div class="elf-balls">${RES[k].selected.map(n=>ball(n)).join("")}</div></div>`).join("");
+  combineNow();
+}
+
+function combineNow(){
+  const {bonus, bad} = X.parseBonus(S.bonus);
+  $("elfBonusMsg").innerHTML = bad.length ? `<div class="msg warn">형식이 맞지 않아 무시: ${bad.join(", ")}</div>` : "";
+  const table = X.combine(RES, S.weights, bonus, RES.freq.rank);
+  TOP25 = table.slice(0,25).map(r=>r.n);
+  $("elfTop").innerHTML = TOP25.map((n,i)=>`<span class="elf-r">${ball(n)}<i>${i+1}</i></span>`).join("");
+  if (!S.wheel) { S.wheel = TOP25.join(", "); $("eWheel").value = S.wheel; save(); }
+}
+
+function gbox(title, g, n){
+  const lvl = {6:"1등",5:"3등",4:"4등",3:"5등"}[g.min] || "없음";
+  const keys = Object.keys(g.dist).map(Number).sort((a,b)=>a-b);
+  const bad = keys.filter(k=>k<4).reduce((s,k)=>s+g.dist[k],0);
+  const head = g.min >= 4
+    ? `<div class="msg ok">✅ 최소 <b>${g.min}개 일치 보장</b> (${lvl} 이상)</div>`
+    : `<div class="msg err">⚠️ 4등 보장 깨짐 — 최소 ${g.min}개 일치 · ${fmt(bad)}가지(${(bad/g.total*100).toFixed(1)}%)는 4등도 안 됨</div>`;
+  return `<div class="gbox"><div class="gt"><b>${title}</b> · ${fmt(n)}게임 (${fmt(n*1000)}원)</div>${head}
+    <table class="rep"><tr><th>최고 일치</th><th>경우의 수</th><th>비율</th></tr>${keys.map(k=>`<tr><td>${k}개</td><td>${fmt(g.dist[k])}</td><td>${(g.dist[k]/g.total*100).toFixed(2)}%</td></tr>`).join("")}</table></div>`;
+}
+
+function runWheel(){
+  const {nums, bad} = parseNums($("eWheel").value);
+  if (nums.length !== 25){ $("elfResult").innerHTML = `<div class="msg err">서로 다른 번호 25개가 필요합니다 (현재 ${nums.length}개${bad.length?`, 무시한 값: ${bad.join(", ")}`:""}).</div>`; return; }
+  const btn=$("eRun"); btn.disabled=true; btn.textContent="177,100가지 검사 중...";
+  setTimeout(()=>{ try{
+    const pool=[...nums].sort((a,b)=>a-b), C=X.wheel(nums);
+    const use = S.filter ? Object.keys(X.CRITERIA) : [];
+    const bd = X.bounds(ROWS, +S.cov);
+    const {mask, dropped} = X.filterCombos(C, bd, use);
+    const kept = C.filter((c,i)=>mask[i]), removed = C.filter((c,i)=>!mask[i]);
+    const gAll = X.summary(X.bestMatch(C,pool)), gKept = use.length ? X.summary(X.bestMatch(kept,pool)) : gAll;
+    LAST = {pool, C, kept, removed, bd, use, gAll, gKept, final: kept, repairInfo: null};
+    renderWheel();
+  } finally { btn.disabled=false; btn.textContent="🧮 균형조합 만들기 · 보장 검사"; } }, 30);
+}
+
+function renderWheel(){
+  const R = LAST; if (!R) return;
+  const p = X.probAllInPool();
+  let h = `<p class="hint" style="margin:12px 0 0">※ '보장'은 <b>당첨번호 6개가 모두 이 25개 안에 들어왔을 때</b>의 이야기입니다. 그럴 확률은 매 회 약 ${(p*100).toFixed(2)}% (약 ${Math.round(1/p)}회에 1번).</p>`;
+  h += gbox("필터 전", R.gAll, R.C.length);
+  if (R.use.length){
+    h += gbox("필터 후", R.gKept, R.kept.length);
+    const hp = X.historyPassRate(ROWS, R.bd, R.use);
+    h += `<div class="msg warn">📉 같은 필터를 역대 실제 당첨번호 ${fmt(ROWS.length)}회에 적용하면 <b>${(hp*100).toFixed(1)}%만 통과</b> → 실제 당첨조합의 ${(100-hp*100).toFixed(1)}%는 버려졌을 것입니다.</div>`;
+    if (R.gKept.min < 4){
+      h += `<div class="elf-rep"><div style="font-weight:600;margin:14px 0 6px">🛠️ 4등 보장 복구</div>
+        <div style="display:grid;gap:8px">
+        <button class="btn" id="eRepF">필터 조건을 지키는 새 조합으로 메우기</button>
+        <button class="btn" id="eRepR">필터에서 뺐던 원래 조합 되살리기</button></div></div>`;
+    }
+    if (R.repairInfo){
+      const i = R.repairInfo;
+      h += `<div class="msg ok">조합 ${i.added}개 추가 → 총 ${R.final.length}게임 · 깨진 경우 ${fmt(i.beforeFail)} → ${fmt(i.afterFail)}가지</div>`;
+      if (i.impossible) h += `<div class="msg warn">남은 ${i.impossible}가지는 <b>필터 조건을 지키는 어떤 조합으로도 메울 수 없습니다</b> (수학적으로 불가능). 완전한 보장이 필요하면 '원래 조합 되살리기'를 쓰거나 필터를 끄세요.</div>`;
+      h += gbox("복구 후", R.gFinal, R.final.length);
+    }
+  }
+  h += `<div style="font-weight:600;margin:16px 0 4px">🎟️ 최종 조합 (${R.final.length}게임)</div>
+    <div class="actions"><button class="btn" id="eCopy">📋 복사</button><button class="btn" id="eShare">📤 공유</button><button class="btn" id="eCsv">💾 CSV</button></div>
+    <div class="elf-list">${R.final.map((c,i)=>`<div class="elf-g"><span class="no">${String(i+1).padStart(3,"0")}</span>${c.map(n=>ball(n)).join("")}</div>`).join("")}</div>`;
+  $("elfResult").innerHTML = h;
+  const rep = (mode) => {
+    const b = $(mode==="r"?"eRepR":"eRepF"); b.disabled=true; b.textContent="찾는 중...";
+    setTimeout(()=>{
+      const out = mode==="r" ? X.repair(R.kept, R.pool, 4, {candidates:R.removed}) : X.repair(R.kept, R.pool, 4, {bd:R.bd, use:R.use});
+      R.final = R.kept.concat(out.added); R.repairInfo = out.info; R.gFinal = X.summary(X.bestMatch(R.final, R.pool));
+      renderWheel();
+    }, 30);
+  };
+  if ($("eRepF")) { $("eRepF").onclick = ()=>rep("f"); $("eRepR").onclick = ()=>rep("r"); }
+  const text = () => `로또 마스터 균형조합 (${R.final.length}게임)\n` + R.final.map((c,i)=>`${String(i+1).padStart(3,"0")}) ${c.map(n=>String(n).padStart(2,"0")).join(" ")}`).join("\n");
+  const copy = async (t) => { try{ await navigator.clipboard.writeText(t); return true; }catch(e){
+    const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select();
+    let ok=false; try{ ok=document.execCommand("copy"); }catch(_){} ta.remove(); return ok; } };
+  $("eCopy").onclick = async ()=> toast(await copy(text()) ? "번호를 복사했습니다" : "복사하지 못했습니다");
+  $("eShare").onclick = async ()=>{ if (navigator.share){ try{ await navigator.share({title:"로또 마스터 균형조합", text:text()}); }catch(e){} } else toast(await copy(text()) ? "공유 기능이 없어 복사했습니다" : "공유할 수 없습니다"); };
+  $("eCsv").onclick = ()=>{
+    const rows=[["게임","N1","N2","N3","N4","N5","N6","합계","AC","짝홀","고저"]].concat(R.final.map((c,i)=>{ const f=X.feat(c); return [i+1,...c,f.sum,f.ac,`짝${f.even}·홀${f.odd}`,`고${f.high}·저${f.low}`]; }));
+    const blob=new Blob(["﻿"+rows.map(r=>r.join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"});
+    const d=new Date(), name=`균형조합_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}.csv`;
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+    toast("CSV 파일을 저장했습니다 (다운로드 폴더)");
+  };
+}
+
+function bindNum(id, key, lo, hi){
+  const el=$(id); el.value=S[key];
+  el.onchange=()=>{ let v=parseInt(el.value,10); if(!Number.isFinite(v)) v=DEF[key]; v=Math.min(Math.max(v,lo),hi); el.value=v; S[key]=v; save(); compute(); };
+}
+function bindTg(id, key, after){ const el=$(id); el.checked=!!S[key]; el.onchange=()=>{ S[key]=el.checked; save(); after(); }; }
+
+function init(){
+  bindNum("eFreqN","freqN",6,45); bindNum("eTrackN","trackN",6,45); bindNum("eCompN","compN",6,45); bindNum("eFuWin","fuWin",6,60);
+  bindTg("eFreqB","freqB",compute); bindTg("eFuPrev","fuPrev",compute); bindTg("eFuNb","fuNb",compute); bindTg("eFuLd","fuLd",compute);
+  const hits=$("eFuHits");
+  hits.innerHTML=[0,1,2,3,4,5,6,7].map(k=>`<button class="chip${S.fuHits.includes(k)?" on":""}" data-k="${k}">${k}회</button>`).join("");
+  hits.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{ const k=+c.dataset.k; S.fuHits = S.fuHits.includes(k) ? S.fuHits.filter(x=>x!==k) : S.fuHits.concat(k).sort(); c.classList.toggle("on"); save(); compute(); });
+  $("eCompFix").value=S.compFix; $("eCompFix").onchange=e=>{ S.compFix=e.target.value; save(); compute(); };
+  $("elfWeights").innerHTML = Object.keys(X.METHODS).map(k=>`<div><label class="f">${X.METHODS[k]}</label>
+    <div class="stepper"><button data-k="${k}" data-d="-0.5" aria-label="줄이기">−</button><input id="ew_${k}" type="number" inputmode="decimal" step="0.5" min="0" max="10" value="${S.weights[k]}"><button data-k="${k}" data-d="0.5" aria-label="늘리기">+</button></div></div>`).join("");
+  $("elfWeights").querySelectorAll("button").forEach(b=>b.onclick=()=>{ const k=b.dataset.k; const v=Math.min(10,Math.max(0,(+S.weights[k]||0)+(+b.dataset.d))); S.weights[k]=v; $("ew_"+k).value=v; save(); combineNow(); });
+  Object.keys(X.METHODS).forEach(k=>{ $("ew_"+k).onchange=e=>{ let v=parseFloat(e.target.value); if(!Number.isFinite(v)) v=1; v=Math.min(10,Math.max(0,v)); e.target.value=v; S.weights[k]=v; save(); combineNow(); }; });
+  $("eBonus").value=S.bonus; $("eBonus").onchange=e=>{ S.bonus=e.target.value; save(); combineNow(); };
+  $("eWheel").value=S.wheel; $("eWheel").onchange=e=>{ S.wheel=e.target.value; save(); };
+  $("eFill").onclick=()=>{ S.wheel=TOP25.join(", "); $("eWheel").value=S.wheel; save(); toast("종합 상위 25개로 채웠습니다"); };
+  const covTxt=()=>{ $("eCovV").textContent=Math.round(S.cov*100)+"%"; $("eCovTxt").textContent=S.filter?`역대 중앙 ${Math.round(S.cov*100)}% 구간 + 빈 번호대 조건`:"꺼짐 — 238조합 그대로"; $("eCovBox").classList.toggle("hidden",!S.filter); };
+  bindTg("eFilter","filter",covTxt);
+  $("eCov").value=S.cov; $("eCov").oninput=e=>{ S.cov=+e.target.value; save(); covTxt(); };
+  covTxt();
+  $("eRun").onclick=runWheel;
+  // 펼칠 때마다 최신 데이터로 다시 계산 ([업데이트]로 새 회차를 받은 경우 반영)
+  $("elfBox").addEventListener("toggle", ()=>{ if($("elfBox").open) compute(); });
 }
 init();
 })();
